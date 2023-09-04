@@ -18,4 +18,5 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		plt.xlabel('Time / s')
 		plt.ylabel('Voltage / V')
 
-	def reduction_charge_by_cycle
+	def reduction_charge_by_cycle():
+		pass
