@@ -1,18 +1,9 @@
 from ECAnalyse.RFB import *
 from ECAnalyse.SuperCap import *
 
-x = [1, 2, 3, 4, 5]
-y1 = [1, 4, 9, 16, 25]
-y2 = [2, 3, 4, 5, 6]
-y3 = [3, 4, 5, 6, 7]
-y4 = [1, 2, 3, 3, 2]
-y5 = [0, 3, 8, 15, 24]
-plt.plot(x, y1, label='Something')
-plt.plot(x, y2, label='Nothing')
-plt.plot(x, y3, label='Another Thing')
-plt.plot(x, y4, label='CO$_2$ Capture')
-plt.plot(x, y5, label = 'RARRRGH')
+file1 = RFB_GCPL('/Users/jack/Documents/Experiments/029 Redox Flow Batteries/2,7-AQDS 1M KCl 22 August 2023/2,7-AQDS 0,1M in 1M KCl solution, ferrocyanide 0,25M catholyte_C01.txt')
+file1.standard_plot(label='File1')
+file2 = RFB_GCPL('/Users/jack/Documents/Experiments/029 Redox Flow Batteries/2,7-AQDS 1M KCl 22 August 2023/2,7-AQDS 0,1M in 1M KCl solution, ferrocyanide 0,25M catholyte (restart)_C01.txt')
+file2.standard_plot(label='File2')
 plt.legend()
-plt.xlabel('X-Axis')
-plt.ylabel('Y-Axis')
 plt.show()
