@@ -36,21 +36,5 @@ def line_of_best_fit(x, y):
 	return m, c
 
 
-def standard_deviation(y, y_model):
-	# Takes two narrays y and y_model. y is the actual data set and y_model
-	# is the modelled data set (may be the moving average or similar). The
-	# residual standard deviation of the data set is then calculated against
-	# the model data
-	residuals = np.subtract(y, y_model) ** 2
-	numerator = np.sum(residuals)
-	denominator = len(y)
-	sigma = np.sqrt(numerator / denominator)
-	return sigma
-
-
-def standard_deviation_of_mean(y, y_model):
-	return standard_deviation(y, y_model) / np.sqrt(len(y))
-
-
 
 
