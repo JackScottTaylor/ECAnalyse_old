@@ -27,11 +27,30 @@ class EC_Lab_Txt_File:
 		# Convert the strings of floats into numpy arrays
 		for name in self.data_names: self.data[name] = np.array(self.data[name])
 
-		print(self.data_names)
 
 
-
-class EC_Lab_Csv_File:
+class EC_Lab_CSV_File:
 	def __init__(self, file_path):
 		self.data_names 	= []
 		self.data         	= {}
+
+		with open(file_path, encoding='latin1') as file:
+			file.readline()
+			self.data_names = file.readline().replace('"', '').split(';')
+
+			# For ease, replacing µ with u in the data_names
+			self.data_names = [x.replace('µ', 'u') for x in self.data_names]
+
+			# Assign an empty list to each of the data names
+			for name in self.data_names: self.data[name] = []
+
+			# Convert each value into a float and append to correct list
+			for line in file.readlines()[2:]:
+				values = line.split(';')
+				for value, name in zip(values, self.data_names):
+					self.data[name].append(float(value))
+
+		# Convert the strings of floats into numpy arrays
+		for name in self.data_names: self.data[name] = np.array(self.data[name])
+
+		
