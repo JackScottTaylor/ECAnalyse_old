@@ -19,6 +19,8 @@ class RA_CV(EC_Lab_Txt_File):
 	def __init__(self, file_path):
 		super().__init__(file_path)
 
+		self.number_of_cycles = len(np.unique(self.data['cycle number']))
+
 	def apply_reference(self, ref):
 		# Often CVs are plotted with the potential being
 		# referenced against a standard potential. This 
@@ -45,6 +47,12 @@ class RA_CV(EC_Lab_Txt_File):
 			x.append(E)
 			y.append(I)
 		plt.plot(x, y, **kwargs)
+
+	def plot_each_cycle(self, **kwargs):
+		# Plots each of the cycles individually and
+		# labels them
+		for i in range(self.number_of_cycles):
+			self.plot_cycles(i, label=f'Cycle {i+1}', **kwargs)
 
 	def smooth_EI(self, n=3):
 		# This function smooths the potential and current data using
