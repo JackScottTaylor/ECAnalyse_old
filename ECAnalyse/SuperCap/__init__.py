@@ -1,18 +1,15 @@
 from ..analysis_tools import *
 from ..file_reader import *
 from ..plotting_tools import *
-
-print('SuperCapacitor Analysis Module Loaded')
-print('Grace is working on this')
-print('hello')
+import os
 
 class SuperCap_GCD(EC_Lab_Txt_File):
 	def __init__(self, file_path):
-		# This established the RFB_GCPL as a child of the EC_Lab text
+		# This established the SuperCap_GCD as a child of the EC_Lab text
 		# file class so that data is read in and stored in self.data
 		super().__init__(file_path)
 
-	def getall(self, **kwargs):
+	def getall(self):
 
 		import numpy as np            #necessary initialisation stuff
 		import matplotlib.pyplot as plt
@@ -27,7 +24,7 @@ class SuperCap_GCD(EC_Lab_Txt_File):
 
 
 		time= self.data['time/s']
-		voltage = self.data['Ewe/V']
+		voltage = self.data['<Ewe>/V']
 		uneditedtime=time       #the time array will be edited and cut off along the way in the code. Unedited time will stay the same.
 		uneditedvoltage=voltage   #the voltage array will be edited and cut off along the way in the code. Unedited voltage will stay the same.
 		size=np.prod(time.shape) #size of the array, will be used later on a lot (how many data points)
@@ -168,7 +165,7 @@ class SuperCap_GCD(EC_Lab_Txt_File):
 		print('mean Capacity across all cycles is ',np.mean(capacity_values))
 
 
-	def getcapacitance(self, **kwargs):
+	def getcapacitance(self):
 
 		import numpy as np            #necessary initialisation stuff
 		import matplotlib.pyplot as plt
