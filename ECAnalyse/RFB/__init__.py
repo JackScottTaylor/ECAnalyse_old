@@ -105,6 +105,7 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		plt.plot(capacities, **kwargs)
 		plt.xlabel('Cycle Number')
 		plt.ylabel('Capacity / mAh')
+		integer_x_axis()
 
 
 	def capacities_vs_time(self, section='discharge', **kwargs):
