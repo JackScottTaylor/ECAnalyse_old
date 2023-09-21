@@ -21,3 +21,12 @@ mpl.rcParams['legend.labelspacing'] 			= 0.15
 mpl.rcParams['axes.xmargin']					= 0.001
 mpl.rcParams['axes.prop_cycle'] 				= plt.cycler(color=[
 	'black', 'firebrick', 'forestgreen', 'dodgerblue', 'hotpink'])
+
+
+def integer_x_axis():
+	# Changes the tick marks on the x-axis to only be integers. This makes 
+	# more sense for graphs where the x-axis is cycle number for example.
+	ax = plt.gca()
+	ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator())
+
+
