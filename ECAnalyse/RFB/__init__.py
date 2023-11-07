@@ -20,6 +20,28 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		plt.ylabel('Voltage / V')
 
 
+	def V_vs_t_I_overlay(self, y1min=None, y1max=None):
+		# Plots voltage vs time with current vs time overlaid
+		time = self.data['time/s']
+		voltage = self.data['Ewe/V']
+		current = self.data['<I>/mA']
+
+		fig, ax1 = plt.subplots()
+		ax1.set_xlabel('Time / s')
+		ax1.set_ylabel('Voltage / V')
+		ax1.plot(time, voltage)
+
+		if y1min: ax1.set_ylim(ymin=y1min)
+		if y1max: ax1.set_ylim(ymax=y1max)
+
+		ax2 = ax1.twinx()
+
+		color = 'firebrick'
+		ax2.set_ylabel('Current / mA', color=color)
+		ax2.plot(time, current, color=color)
+		ax2.tick_params(axis='y', labelcolor=color)
+
+
 	def theoretical_max_charge(self, concentration, volume, n=1):
 		# This function takes a concentration / M and volume / mL and 
 		# number of electrons to calculate the charge required to 
@@ -100,6 +122,20 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		return efficiencies
 
 
+	def efficiency(self, x='cycles'):
+		efficiencies = self.coloumbic_efficiencies()
+		start_times = self.cycle_start_times()
+
+		if x == 'time':
+			plt.plot(start_times, efficiencies)
+			plt.xlabel('Time / s')
+		else:
+			plt.plot(efficiencies)
+			plt.xlabel('Cycle')
+		plt.ylabel('Coloumbic Efficiency / %')
+		plt.ylim(0, 100)
+
+
 	def capacities_vs_cycles(self, section='discharge', **kwargs):
 		capacities = self.capacities(section=section)
 		plt.plot(capacities, **kwargs)
@@ -114,6 +150,7 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		plt.plot(start_times, capacities, **kwargs)
 		plt.xlabel('Time / s')
 		plt.ylabel('Capacity / mAh')
+		plt.ylim(ymin=0)
 
 
 
