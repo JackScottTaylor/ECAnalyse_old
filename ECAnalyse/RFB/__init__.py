@@ -122,35 +122,35 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		return efficiencies
 
 
-	def efficiency(self, x='cycles'):
+	def efficiency(self, x='cycles', **kwargs):
 		efficiencies = self.coloumbic_efficiencies()
 		start_times = self.cycle_start_times()
 
 		if x == 'time':
-			plt.plot(start_times, efficiencies)
+			plt.plot(start_times, efficiencies, **kwargs)
 			plt.xlabel('Time / s')
 		else:
-			plt.plot(efficiencies)
+			plt.plot(efficiencies, **kwargs)
 			plt.xlabel('Cycle')
 		plt.ylabel('Coloumbic Efficiency / %')
 		plt.ylim(0, 100)
 
 
-	def capacities_vs_cycles(self, section='discharge', **kwargs):
-		capacities = self.capacities(section=section)
+	def capacities_vs_cycles(self, section='discharge', scale=1, **kwargs):
+		capacities = self.capacities(section=section) * scale
 		plt.plot(capacities, **kwargs)
 		plt.xlabel('Cycle Number')
 		plt.ylabel('Capacity / mAh')
 		integer_x_axis()
 
 
-	def capacities_vs_time(self, section='discharge', **kwargs):
-		capacities = self.capacities(section=section)
+	def capacities_vs_time(self, section='discharge', scale=1, **kwargs):
+		capacities = self.capacities(section=section) * scale
 		start_times = self.cycle_start_times()
 		plt.plot(start_times, capacities, **kwargs)
 		plt.xlabel('Time / s')
 		plt.ylabel('Capacity / mAh')
-		plt.ylim(ymin=0)
+		
 
 
 
