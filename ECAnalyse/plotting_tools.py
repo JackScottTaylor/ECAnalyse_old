@@ -11,6 +11,7 @@ mpl.rcParams['lines.linewidth'] 				= 2
 mpl.rcParams['figure.figsize'] 					= [8.3, 6.225]
 mpl.rcParams['axes.linewidth'] 					= 1.2
 mpl.rcParams['font.family'] 					= 'Times New Roman'
+mpl.rcParams['mathtext.fontset'] 				= 'stix'
 mpl.rcParams['font.size'] 						= 24
 mpl.rcParams['savefig.dpi'] 					= 300
 mpl.rcParams['savefig.format'] 					= 'pdf'
