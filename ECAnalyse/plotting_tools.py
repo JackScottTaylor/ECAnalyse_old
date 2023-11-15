@@ -39,11 +39,20 @@ def plot(x, y, ax=plt.gca(), **kwargs):
 
 def overlay(x, y, ax=plt.gca(), **kwargs):
 	# Using the same x-axis, a second y-axis is created to plot
-	# the provided x and y datasets to.
+	# the provided x and y datasets to. It also sets the ticks
+	# and y-label color to the same as the plot color for the 
+	# overlay
+	
 	fig = plt.gcf()
 	overlay_ax = ax.twinx()
 	if len(fig.axes) > 2:
 		overlay_ax.spines.right.set_position(('axes', 1. + (len(fig.axes)-2)/4))
 	overlay_ax.plot(x, y, **kwargs)
+
+	color = overlay_ax.lines[-1].get_color()
+	overlay_ax.spines['right'].set_color(color)
+	overlay_ax.tick_params(axis='y', colors=color)
+	overlay_ax.yaxis.label.set_color(color)
+
 
 

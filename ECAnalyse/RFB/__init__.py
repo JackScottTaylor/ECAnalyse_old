@@ -4,6 +4,19 @@ from ..plotting_tools import *
 
 print('Redox Flow Battery Analysis Module Loaded')
 
+
+def theoretical_max_charge(concentration, volume, n=1):
+	# This function takes a concentration / M and volume / mL and 
+	# number of electrons to calculate the charge required to 
+	# fully charge the system / mAh
+
+	electron_moles 	= concentration 	* (volume / 1000) * n
+	charge_coulombs = electron_moles 	* 96485.3321
+	charge_mah 		= charge_coulombs 	/ 3.6
+	return charge_mah
+
+
+
 class RFB_GCPL(EC_Lab_Txt_File):
 	def __init__(self, file_path):
 		# This established the RFB_GCPL as a child of the EC_Lab text
@@ -11,46 +24,58 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		super().__init__(file_path)
 
 
-	def plot(self, **kwargs):
+	def E_t_plot(self, ax=plt.gca(), **kwargs):
 		# Standard plot in this case plots voltage against time
-		x = self.data['time/s']
-		y = self.data['Ewe/V']
-		plt.plot(x, y, **kwargs)
+		self.plot('t', 'V', ax=ax, **kwargs)
 		plt.xlabel('Time / s')
 		plt.ylabel('Voltage / V')
 
 
-	def V_vs_t_I_overlay(self, y1min=None, y1max=None):
-		# Plots voltage vs time with current vs time overlaid
-		time = self.data['time/s']
-		voltage = self.data['Ewe/V']
-		current = self.data['<I>/mA']
-
-		fig, ax1 = plt.subplots()
-		ax1.set_xlabel('Time / s')
-		ax1.set_ylabel('Voltage / V')
-		ax1.plot(time, voltage)
-
-		if y1min: ax1.set_ylim(ymin=y1min)
-		if y1max: ax1.set_ylim(ymax=y1max)
-
-		ax2 = ax1.twinx()
-
-		color = 'firebrick'
-		ax2.set_ylabel('Current / mA', color=color)
-		ax2.plot(time, current, color=color)
-		ax2.tick_params(axis='y', labelcolor=color)
+	def add_I_overlay(self, ax=plt.gca(), **kwargs):
+		# This is called after E_t_plot to add an overlay of the current
+		overlay('t', 'I', ax=ax, **kwargs)
+		plt.ylabel('Current / mA')
 
 
-	def theoretical_max_charge(self, concentration, volume, n=1):
-		# This function takes a concentration / M and volume / mL and 
-		# number of electrons to calculate the charge required to 
-		# fully charge the system / mAh
+	def I_t_plot(self, ax=plt.gca(), **kwargs):
+		# Plots I vs t
+		self.plot('t', 'I', ax=ax, **kwargs)
+		plt.xlabel('Time / s')
+		plt.ylabel('Current / mA')
 
-		electron_moles 	= concentration 	* (volume / 1000) * n
-		charge_coulombs = electron_moles 	* 96485.3321
-		charge_mah 		= charge_coulombs 	/ 3.6
-		return charge_mah
+
+	def E_C_plot(self, ax=plt.gca(), **kwargs):
+		# Plots battery voltage against capacity
+
+		# If just plot V against C then get horrible straight lines cutting
+		# across the plot. To combat this, plot the charging and discharging
+		# curves separately. Then it is also necessary to plot for each cycle
+		# separately otherwise get annoying lines again.
+
+		for c in self.cycles:
+			filter1 = 	{
+						'cycle number'	: c,
+						'ox/red' 		: 1
+						}
+			filter2 = 	{
+						'cycle number'	: c,
+						'ox/red' 		: 0
+						}
+
+			E, C = self.filtered_data('E', filter1), self.filtered_data('C', filter1)
+			if type(E)!=type(None) and type(C)!=type(None):
+				plt.plot(C[:-1], E[:-1], **kwargs)
+				# If label given in kwargs, only want one legend entry so this sets
+				# the label to not show in legend after one plotting.
+				kwargs['label']='_nolegend_'
+
+			E, C = self.filtered_data('E', filter2), self.filtered_data('C', filter2)
+			if type(E)!=type(None) and type(C)!=type(None):
+				plt.plot(C[1:], E[1:], **kwargs)
+				kwargs['label']='_nolegend_'
+
+		plt.xlabel('Capacity / mAh')
+		plt.ylabel("Battery Voltage / V")
 
 
 	def cycle_start_times(self):
@@ -150,6 +175,33 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		plt.plot(start_times, capacities, **kwargs)
 		plt.xlabel('Time / s')
 		plt.ylabel('Capacity / mAh')
+
+
+	def capacity_fade(self):
+		# Plots the capacity fade as a function of time using the start times of the 
+		# cycles.
+		x = self.cycle_start_times() / 3600
+		y = self.capacities()
+
+		dydx = differentiate(x, y)
+		plt.plot(x, (dydx / y) * 100)
+
+		plt.xlabel('Time / h')
+		plt.ylabel('Capacity Fade / % h$^{-1}$')
+
+
+	def capacity_retention(self):
+		# Plots the capacity retention as a function of time using the start times of
+		# the cycles.
+
+		x = self.cycle_start_times() / 3600
+		y = self.capacities()
+
+		dydx = differentiate(x, y)
+		plt.plot(x, 100 + (dydx / y) * 100)
+
+		plt.xlabel('Time / h')
+		plt.ylabel('Capacity Fade / % h$^{-1}$')
 		
 
 
