@@ -31,3 +31,19 @@ def integer_x_axis():
 	ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator())
 
 
+def plot(x, y, ax=plt.gca(), **kwargs):
+	# Plots x and y to a specified axis or if none is specified
+	# then to the current axis
+	ax.plot(x, y, **kwargs)
+
+
+def overlay(x, y, ax=plt.gca(), **kwargs):
+	# Using the same x-axis, a second y-axis is created to plot
+	# the provided x and y datasets to.
+	fig = plt.gcf()
+	overlay_ax = ax.twinx()
+	if len(fig.axes) > 2:
+		overlay_ax.spines.right.set_position(('axes', 1. + (len(fig.axes)-2)/4))
+	overlay_ax.plot(x, y, **kwargs)
+
+

@@ -1,4 +1,5 @@
 import numpy as np
+from .plotting_tools import *
 
 class EC_Lab_Txt_File:
 	# This class is simply used to read in an EC_Lab exported .txt file and store all of the relevant data as numpy arrays.
@@ -27,6 +28,33 @@ class EC_Lab_Txt_File:
 		# Convert the strings of floats into numpy arrays
 		for name in self.data_names: self.data[name] = np.array(self.data[name])
 
+		self.abbreviations = {
+				't' 			: 'time/s',
+				'dq' 			: 'dq/ma.h',
+				'Q' 			: 'Q-Qo)/mA.h',
+				'E' 			: 'Ewe/V',
+				'C_Charge'		: 'Capacitance charge/µF',
+				'C_Discharge' 	: 'Capacitance discharge/µF',
+				'I' 			: '<I>/mA',
+				'C' 			: 'Capacity/mA.h',
+				'efficiency' 	: 'Efficiency/%',
+				}	
+
+	def get_data(self, x):
+		if x not in self.abbreviations.keys(): return self.data[x]
+		return self.data[self.abbreviations[x]]
+
+
+	def plot(self, x, y, ax=plt.gca(), **kwargs):
+		x = self.get_data(x)
+		y = self.get_data(y)
+		plot(x, y, ax=ax, **kwargs)
+
+
+	def overlay(self, x, y, ax=plt.gca(), **kwargs):
+		x = self.get_data(x)
+		y = self.get_data(y)
+		overlay(x, y, ax=ax, **kwargs)
 
 
 class EC_Lab_CSV_File:
