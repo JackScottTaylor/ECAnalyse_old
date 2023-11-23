@@ -1,12 +1,38 @@
 import numpy as np
 from .plotting_tools import *
 
+def replace_escape_seqs(string):
+	esc_dict = {
+				'\a' : r'\a',
+				'\b' : r'\b',
+				'\f' : r'\f',
+				'\n' : r'\n',
+				'\r' : r'\r',
+				'\t' : r'\t',
+				'\v' : r'\v'
+	}
+	new_string = ''
+	for char in string:
+		if char in esc_dict.keys():
+			new_string += esc_dict[char]
+		else:
+			new_string += char
+	return new_string
+
+
 class EC_Lab_Txt_File:
-	# This class is simply used to read in an EC_Lab exported .txt file and store all of the relevant data as numpy arrays.
+	# This class is simply used to read in an EC_Lab exported .txt file and store all
+	# of the relevant data as numpy arrays.
 	
 	def __init__(self, file_path):
 		self.data_names 	= []
 		self.data         	= {}
+
+		# For those pesky Windows users, this gets rid of most escape characters
+		# that can be passed in file paths, however can't handle if path contains
+		# \N, \U, \u, \x. Best practise for windows users is to use r'' string
+		# format for copy and pasting file paths.
+		file_path = replace_escape_seqs(file_path)
 
 		# The first line contains some mus and therefore is encoded with latin1
 		# instead of the usual UTF-8
