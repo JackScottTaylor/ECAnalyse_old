@@ -24,6 +24,34 @@ class EIS(EC_Lab_Txt_File):
 			ax.plot([x1, x2], [m*x1+c, m*x2+c], **kwargs)
 		return m, c
 
+	def Bode_Z(self, ax=plt.gca(), **kwargs):
+		x = np.log(self.get_data('freq/Hz'))
+		Re, Im = self.get_data('Re'), self.get_data('Im')
+		absolute_Z = np.sqrt(np.add(np.multiply(Re, Re), np.multiply(Im, Im)))
+		arg_z = np.arctan(np.divide(Im, Re))
+		ax.set_xlabel(r'ln($\omega$ / Hz)')
+		ax.set_ylabel('ln(|Z| / $\Omega$)')
+		plot(x, np.log(absolute_Z), **kwargs)
+
+	def Bode_arg(self, ax=plt.gca(), **kwargs):
+		x = np.log(self.get_data('freq/Hz'))
+		Re, Im = self.get_data('Re'), self.get_data('Im')
+		absolute_Z = np.sqrt(np.add(np.multiply(Re, Re), np.multiply(Im, Im)))
+		arg_Z = np.arctan(np.divide(Im, Re))
+		ax.set_xlabel(r'ln($\omega$ / Hz)')
+		ax.set_ylabel('Arg(Z) / Radians')
+		plot(x, arg_Z, **kwargs)
+
+	def Bode(self, ax=plt.gca()):
+		self.Bode_Z(ax=ax)
+		overlay_ax = ax.twinx()
+		self.Bode_arg(ax=overlay_ax, color='firebrick')
+		overlay_ax.spines['right'].set_color('firebrick')
+		overlay_ax.yaxis.label.set_color('firebrick')
+		overlay_ax.tick_params(axis='y', colors='firebrick')
+
+
+
 def make_square(ax=plt.gca(), maximum=False):
 	# EIS spectra should have square axes
 	# This identifies the longest axis and reshapes

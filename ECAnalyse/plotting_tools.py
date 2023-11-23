@@ -19,7 +19,8 @@ mpl.rcParams['figure.constrained_layout.h_pad'] = 0.2
 mpl.rcParams['figure.constrained_layout.w_pad'] = 0.2
 mpl.rcParams['figure.constrained_layout.use'] 	= True
 mpl.rcParams['legend.labelspacing'] 			= 0.15
-mpl.rcParams['axes.xmargin']					= 0.001
+mpl.rcParams['axes.xmargin']					= 0.000
+mpl.rcParams['axes.ymargin'] 					= 0.0
 mpl.rcParams['axes.prop_cycle'] 				= plt.cycler(color=[
 	'black', 'firebrick', 'forestgreen', 'dodgerblue', 'hotpink'])
 
