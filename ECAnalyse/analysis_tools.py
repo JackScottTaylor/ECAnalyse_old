@@ -36,5 +36,10 @@ def line_of_best_fit(x, y):
 	return m, c
 
 
+def x_intercept(m, c):
+	# y =  mx+c, 0 = mx+c, x = -c/m
+	return -c / m
+
+
 
 

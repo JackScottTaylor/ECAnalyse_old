@@ -38,6 +38,8 @@ class EC_Lab_Txt_File:
 				'I' 			: '<I>/mA',
 				'C' 			: 'Capacity/mA.h',
 				'efficiency' 	: 'Efficiency/%',
+				'Re' 			: 'Re(Z)/Ohm',
+				'Im' 			: '-Im(Z)/Ohm'
 				}	
 
 	def get_data(self, x):
