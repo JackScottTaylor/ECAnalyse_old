@@ -41,5 +41,9 @@ def x_intercept(m, c):
 	return -c / m
 
 
+def radians_to_degrees(angle):
+	return (angle / (2*np.pi)) * 360
+
+
 
 

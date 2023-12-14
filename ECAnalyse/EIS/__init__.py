@@ -10,8 +10,8 @@ class EIS(EC_Lab_Txt_File):
 
 	def Nyquist(self, ax=plt.gca(), **kwargs):
 		self.plot('Re', 'Im', ax=ax, **kwargs)
-		ax.set_xlabel(r'Re(Z)/$\Omega$')
-		ax.set_ylabel(r'Im(Z)/$\Omega$')
+		ax.set_xlabel(r'Z$_\mathrm{R}$ / $\Omega$')
+		ax.set_ylabel(r'-Z$_\mathrm{i}$ / $\Omega$')
 
 	def linear_section(self, section=0.9, plot=False, ax=plt.gca(), **kwargs):
 		# section determines how much of first part to ignore. Preset to use
@@ -28,28 +28,68 @@ class EIS(EC_Lab_Txt_File):
 		x = np.log(self.get_data('freq/Hz'))
 		Re, Im = self.get_data('Re'), self.get_data('Im')
 		absolute_Z = np.sqrt(np.add(np.multiply(Re, Re), np.multiply(Im, Im)))
-		arg_z = np.arctan(np.divide(Im, Re))
 		ax.set_xlabel(r'ln($\omega$ / Hz)')
-		ax.set_ylabel('ln(|Z| / $\Omega$)')
-		plot(x, np.log(absolute_Z), **kwargs)
+		ax.set_ylabel('|Z| / $\Omega$)')
+		ax.plot(x, absolute_Z, **kwargs)
 
 	def Bode_arg(self, ax=plt.gca(), **kwargs):
 		x = np.log(self.get_data('freq/Hz'))
 		Re, Im = self.get_data('Re'), self.get_data('Im')
 		absolute_Z = np.sqrt(np.add(np.multiply(Re, Re), np.multiply(Im, Im)))
-		arg_Z = np.arctan(np.divide(Im, Re))
+		arg_Z = np.arctan(np.divide(-Im, Re))
+		print(arg_Z)
+		arg_Z = radians_to_degrees(arg_Z)
+		print(arg_Z)
 		ax.set_xlabel(r'ln($\omega$ / Hz)')
-		ax.set_ylabel('Arg(Z) / Radians')
-		plot(x, arg_Z, **kwargs)
+		ax.set_ylabel('Arg(Z) / $\degree$')
+		ax.plot(x, arg_Z, **kwargs)
+		ax.set_ylim((-90.01, 90.01))
+		ax.set_yticks((-90, -45, 0, 45, 90))
 
 	def Bode(self, ax=plt.gca()):
 		self.Bode_Z(ax=ax)
 		overlay_ax = ax.twinx()
-		self.Bode_arg(ax=overlay_ax, color='firebrick')
+		self.Bode_arg(color='firebrick', ax=overlay_ax)
 		overlay_ax.spines['right'].set_color('firebrick')
 		overlay_ax.yaxis.label.set_color('firebrick')
 		overlay_ax.tick_params(axis='y', colors='firebrick')
 
+
+	def R_A(self):
+		# The minimum real value of the impedance which should
+		# also have zero imaginary contribution
+		Z_Re = self.get_data('Re')
+		print(Z_Re)
+		return np.min(Z_Re)
+
+
+
+	def R_B(self):
+		# This is the value of Z_real where the semi-circular section of the Nyquist
+		# plot ends
+		x, y = moving_average(self.get_data('Re')), moving_average(self.get_data('Im'))
+		dydx = differentiate(x, y)
+		min_index = np.argmin(dydx)
+		plt.plot(x[min_index], y[min_index], color='red', label='min')
+		return[x[min_index]]
+
+
+	def semi_circle(self, x_0, x_1, y_1):
+		# (x-x_m)^2+y^2=r^2, 
+		'''x, y = self.get_data('Re'), self.get_data('Im')
+			for i in range(len(x)):
+				x_m = np.mean(x[:i])
+				r_squared = np.mean((x[:i]-x_m)**2 + y[:i]**2)
+				r = r_squared ** 0.5
+				print(x_m, r)
+		'''
+		radius = diameter_estimate(x_0, x_1, y_1) / 2
+		x_m = x_0 + radius
+
+		x = np.linspace(x_m - radius, x_m + radius, 250)
+		y = np.sqrt(radius**2 - (x-x_m)**2)
+
+		plt.plot(x, y)
 
 
 def make_square(ax=plt.gca(), maximum=False):
@@ -61,6 +101,28 @@ def make_square(ax=plt.gca(), maximum=False):
 	if not maximum: maximum = max(x2, y2)
 	ax.set_xlim([0, maximum])
 	ax.set_ylim([0, maximum])
+
+
+def diameter_estimate(x_0, x_1, y_1):
+	# This assumes a circle with a centre which lies
+	# on the x-axis
+	dx = x_1 - x_0
+	dy = y_1
+	adj = (dx ** 2 + dy ** 2) ** 0.5
+	theta = np.arctan(dy/dx)
+
+	# cos(theta) = adj / diameter
+	diameter = adj / np.cos(theta)
+	return diameter
+
+
+
+
+
+
+
+
+
 
 
 

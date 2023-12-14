@@ -20,7 +20,7 @@ class EC_Lab_Txt_File:
 			for name in self.data_names: self.data[name] = []
 
 			# Convert each value into a float and append to correct list
-			for line in file.readlines()[1:]:
+			for line in file.readlines():
 				values = line.split('\t')
 				for value, name in zip(values, self.data_names):
 					self.data[name].append(float(value))
