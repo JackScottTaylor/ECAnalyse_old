@@ -23,6 +23,22 @@ class EIS(EC_Lab_Txt_File):
 			x1, x2 = ax.get_xlim()
 			ax.plot([x1, x2], [m*x1+c, m*x2+c], **kwargs)
 		return m, c
+	
+	def linear_section_region(self, start, end, plot=False, ax=plt.gca(), **kwargs):
+		# Start and end are in terms of the x_axis
+		xs, ys = self.get_data('Re'), self.get_data('Im')
+		x_section, y_section = [], []
+		for x, y in zip(xs, ys):
+			if x <= start or x >= end: continue
+			x_section.append(x)
+			y_section.append(y)
+
+		m, c = line_of_best_fit(x_section, y_section)
+		if plot:
+			x1, x2 = ax.get_xlim()
+			ax.plot([x1, x2], [m*x1+c, m*x2+c], **kwargs)
+		return m, c
+
 
 	def Bode_Z(self, ax=plt.gca(), **kwargs):
 		x = np.log(self.get_data('freq/Hz'))
