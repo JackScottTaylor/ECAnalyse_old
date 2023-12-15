@@ -2,6 +2,15 @@ from ..analysis_tools import *
 from ..file_reader import *
 from ..plotting_tools import *
 
+'''
+TO DO:
+C' and C'' plots for finding equilibrium capacitances
+Explained in papers from Jamie.
+
+Don't join start and ends of different cycles.
+
+'''
+
 print("Ready to Analyse EIS!!")
 
 class EIS(EC_Lab_Txt_File):
