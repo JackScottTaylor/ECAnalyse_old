@@ -8,10 +8,12 @@ class EIS(EC_Lab_Txt_File):
 	def __init__(self, file_path):
 		super().__init__(file_path)
 
+
 	def Nyquist(self, ax=plt.gca(), **kwargs):
 		self.plot('Re', 'Im', ax=ax, **kwargs)
 		ax.set_xlabel(r'Z$_\mathrm{R}$ / $\Omega$')
 		ax.set_ylabel(r'-Z$_\mathrm{i}$ / $\Omega$')
+
 
 	def linear_section(self, section=0.9, plot=False, ax=plt.gca(), **kwargs):
 		# section determines how much of first part to ignore. Preset to use
@@ -24,6 +26,7 @@ class EIS(EC_Lab_Txt_File):
 			ax.plot([x1, x2], [m*x1+c, m*x2+c], **kwargs)
 		return m, c
 	
+
 	def linear_section_region(self, start, end, plot=False, ax=plt.gca(), **kwargs):
 		# Start and end are in terms of the x_axis
 		xs, ys = self.get_data('Re'), self.get_data('Im')
@@ -38,6 +41,13 @@ class EIS(EC_Lab_Txt_File):
 			x1, x2 = ax.get_xlim()
 			ax.plot([x1, x2], [m*x1+c, m*x2+c], **kwargs)
 		return m, c
+	
+
+	def lsr(self, start, end, plot=False, ax=plt.gca(), **kwargs):
+		# linear_section_region is a bit of a mouthful so have added this
+		# as a shorter way of calling the function.
+		m, c = self.linear_section_region(start, end, plot=plot, ax=ax, **kwargs)
+		return m, c
 
 
 	def Bode_Z(self, ax=plt.gca(), **kwargs):
@@ -47,6 +57,7 @@ class EIS(EC_Lab_Txt_File):
 		ax.set_xlabel(r'ln($\omega$ / Hz)')
 		ax.set_ylabel('|Z| / $\Omega$)')
 		ax.plot(x, absolute_Z, **kwargs)
+
 
 	def Bode_arg(self, ax=plt.gca(), **kwargs):
 		x = np.log(self.get_data('freq/Hz'))
@@ -61,6 +72,7 @@ class EIS(EC_Lab_Txt_File):
 		ax.plot(x, arg_Z, **kwargs)
 		ax.set_ylim((-90.01, 90.01))
 		ax.set_yticks((-90, -45, 0, 45, 90))
+
 
 	def Bode(self, ax=plt.gca()):
 		self.Bode_Z(ax=ax)
@@ -77,7 +89,6 @@ class EIS(EC_Lab_Txt_File):
 		Z_Re = self.get_data('Re')
 		print(Z_Re)
 		return np.min(Z_Re)
-
 
 
 	def R_B(self):
@@ -106,6 +117,32 @@ class EIS(EC_Lab_Txt_File):
 		y = np.sqrt(radius**2 - (x-x_m)**2)
 
 		plt.plot(x, y)
+
+
+	def resistances(self, n=5, ax=plt.gca(), plot=False, **kwargs):
+		# This function calculates the line of best fit over every
+		# n data points and calculates the x-intercept for each
+		# line 
+		x 		= self.get_data('Re')
+		y 		= self.get_data('Im')
+
+		all_slice_indices = slice_indices(x, n)
+		x_intercepts = []
+
+		xs = []
+		for slice in all_slice_indices:
+			x_slice, y_slice = x[slice], y[slice]
+			m, c = line_of_best_fit(x_slice, y_slice)
+			x_int = x_intercept(m, c)
+			x_intercepts.append(x_int)
+			xs.append(np.mean(x_slice))
+
+		if plot:
+			ax.plot(xs, x_intercepts, **kwargs)
+			ax.set_xlabel(r'Z$_\mathrm{R}$ / $\Omega$')
+			ax.set_ylabel(r'Resistance / $\Omega$')
+
+		return x_intercepts
 
 
 def make_square(ax=plt.gca(), maximum=False):
