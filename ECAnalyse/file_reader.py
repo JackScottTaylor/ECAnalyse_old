@@ -46,7 +46,7 @@ class EC_Lab_Txt_File:
 			for name in self.data_names: self.data[name] = []
 
 			# Convert each value into a float and append to correct list
-			for line in file.readlines()[1:]:
+			for line in file.readlines():
 				values = line.split('\t')
 				for value, name in zip(values, self.data_names):
 					self.data[name].append(float(value))
@@ -64,6 +64,8 @@ class EC_Lab_Txt_File:
 				'I' 			: '<I>/mA',
 				'C' 			: 'Capacity/mA.h',
 				'efficiency' 	: 'Efficiency/%',
+				'Re' 			: 'Re(Z)/Ohm',
+				'Im' 			: '-Im(Z)/Ohm'
 				}	
 
 	def get_data(self, x):

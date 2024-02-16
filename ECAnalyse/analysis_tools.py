@@ -36,5 +36,25 @@ def line_of_best_fit(x, y):
 	return m, c
 
 
+def x_intercept(m, c):
+	# y =  mx+c, 0 = mx+c, x = -c/m
+	return -c / m
+
+
+def radians_to_degrees(angle):
+	return (angle / (2*np.pi)) * 360
+
+
+def slice_indices(x, n):
+	length = len(x)
+	indices = np.array(list(range(n)))
+	iteration = np.array([1] * n)
+	indices_list = [indices]
+	while indices[-1] < length - 1:
+		indices = np.add(indices, iteration)
+		indices_list.append(indices)
+	return indices_list
+
+
 
 
