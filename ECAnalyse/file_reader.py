@@ -109,4 +109,68 @@ class EC_Lab_CSV_File:
 		# Convert the strings of floats into numpy arrays
 		for name in self.data_names: self.data[name] = np.array(self.data[name])
 
-		
+
+class NMR_Txt_File_1D:
+	# Used for reading 1D NMR output by topspin
+	def __init__(self, filePath):
+		self.intensities = []
+
+		with open (filePath) as file:
+			for line in file.readlines():
+				if line[0] != '#':
+					self.intensities.append(float(line.strip()))
+					continue
+
+				if 'LEFT' in line:
+					ppm_max, ppm_min = line.split()[3], line.split()[7]
+					ppm_max, ppm_min = float(ppm_max), float(ppm_min)
+					continue
+
+				if 'SIZE' in line:
+					size = int(line.split()[3])
+					
+		self.ppm_scale = np.linspace(ppm_max, ppm_min, size)
+		self.intensities = np.array(self.intensities)
+				
+			
+class NMR_Txt_File_2D:
+	# Used for reading 2D NMR output by topspin
+	def __init__(self, filePath):
+		self.intensities = []
+
+		with open(filePath) as file:
+			data = []
+			for line in file.readlines():
+				if line[0] != '#':
+					data.append(float(line.strip()))
+					continue
+
+				if '# row' in line:
+					self.intensities.append(np.array(data))
+					data = []
+					continue
+
+				if 'F2LEFT' in line:
+					ppm_max, ppm_min = line.split()[3], line.split()[7]
+					ppm_max, ppm_min = float(ppm_max), float(ppm_min)
+					continue
+
+				if 'NROWS' in line:
+					nrows = int(line.split()[3])
+					continue
+
+				if 'NCOLS' in line:
+					ncols = int(line.split()[3])
+					continue
+			
+			self.intensities.append(np.array(data))
+
+		self.intensities = np.array(self.intensities[1:])
+		self.spectra = self.intensities
+		self.ppm_scale = self.ppm_scale = np.linspace(ppm_max, ppm_min, ncols)
+
+				
+
+			
+					
+

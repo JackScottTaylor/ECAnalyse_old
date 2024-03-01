@@ -78,9 +78,17 @@ class SC_CV(EC_Lab_Txt_File):
         # mass should be in mg
         C = self.capacitance(scan_rate, cycle=cycle)
         return C / (mass / 1000)
+
+
+    def Rp(self, cycle=0):
+        E, I = self.charging_step(cycle=cycle)
+        l = len(E)
+        m, c = line_of_best_fit(E[l//4:3*l//4], I[l//4:3*l//4])
+        R = m/1000
+        return m, R
     
 
-    
+
 
         
 

@@ -6,6 +6,13 @@ This little library imports matplotlib for immediate use and also sets a few
 stylistic parameters for how graphs should be presented
 '''
 
+color_palettes = {
+	'jack' 	: ['black', 'firebrick', 'forestgreen', 'dodgerblue', 'hotpink'],
+	'qual_bright': ['#222222', '#AA3377', '#CCBB44', '#228833', '#66CCEE', '#4477AA'],
+	'qual_mc' : ['#000000', '#004488', '#994455', '#6699CC', '#EE99AA', '#EECC66'],
+}
+
+
 # This block of code loads some formatting to be used for making the graphs
 mpl.rcParams['lines.linewidth'] 				= 2
 mpl.rcParams['figure.figsize'] 					= [8.3, 6.225]
@@ -19,10 +26,9 @@ mpl.rcParams['figure.constrained_layout.h_pad'] = 0.2
 mpl.rcParams['figure.constrained_layout.w_pad'] = 0.2
 mpl.rcParams['figure.constrained_layout.use'] 	= True
 mpl.rcParams['legend.labelspacing'] 			= 0.15
-mpl.rcParams['axes.xmargin']					= 0.000
-mpl.rcParams['axes.ymargin'] 					= 0.0
-mpl.rcParams['axes.prop_cycle'] 				= plt.cycler(color=[
-	'black', 'firebrick', 'forestgreen', 'dodgerblue', 'hotpink'])
+mpl.rcParams['axes.xmargin']					= 0.01
+mpl.rcParams['axes.ymargin'] 					= 0.01
+mpl.rcParams['axes.prop_cycle'] 				= plt.cycler(color=color_palettes['qual_bright'])
 
 
 def integer_x_axis():
