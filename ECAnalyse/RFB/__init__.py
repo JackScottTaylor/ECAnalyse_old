@@ -11,12 +11,24 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		super().__init__(file_path)
 
 
-	def plot(self, **kwargs):
+	def plot(self, ax=plt.gca(), **kwargs):
 		# Standard plot in this case plots voltage against time
 		x = self.data['time/s']
 		y = self.data['Ewe/V']
-		plt.plot(x, y, **kwargs)
-		plt.xlabel('Time / s')
+		ax.plot(x, y, **kwargs)
+		ax.set_xlabel('Time / s')
+		ax.set_ylabel('Voltage / V')
+
+
+	def V_vs_capacity(self, start=0, end=-1, **kwargs):
+		# Plots voltage vs capacity
+		x = self.data['Capacity/mA.h']
+		y = self.data['Ewe/V']
+		cycle_start_times = self.cycle_start_indices()[start:end]
+		for start, end in zip(cycle_start_times[:-1], cycle_start_times[1:]):
+			start, end = int(start), int(end)
+			plt.plot(x[start:end], y[start:end], color='black', linestyle='-')
+		plt.xlabel('Capacity / mA.h')
 		plt.ylabel('Voltage / V')
 
 
@@ -65,6 +77,17 @@ class RFB_GCPL(EC_Lab_Txt_File):
 					break
 
 		return start_times
+	
+	def cycle_start_indices(self):
+		cycles = np.unique(self.data['cycle number'])
+		start_indices = np.zeros(len(cycles))
+		for i, cycle in enumerate(cycles):
+			for j, c_number in enumerate(self.data['cycle number']):
+				if c_number == cycle:
+					start_indices[i] = int(j)
+					break
+
+		return start_indices
 
 
 	def capacities_charge(self, section='red'):
@@ -150,6 +173,8 @@ class RFB_GCPL(EC_Lab_Txt_File):
 		plt.plot(start_times, capacities, **kwargs)
 		plt.xlabel('Time / s')
 		plt.ylabel('Capacity / mAh')
+
+	
 		
 
 

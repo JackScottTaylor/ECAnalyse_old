@@ -1,5 +1,4 @@
 import numpy as np
-import scipy
 
 def moving_average(a, n=3):
 	# Returns the moving average over n points for the provided
@@ -54,6 +53,27 @@ def slice_indices(x, n):
 		indices = np.add(indices, iteration)
 		indices_list.append(indices)
 	return indices_list
+
+
+def lorentzian(x, I, x0, w):
+	# Returns a lorentzian function for the supplied x values
+	# I is intensity, x0 is centre of function and w is width
+	# at half height
+	return I * (w/2) ** 2/ ((x-x0)**2 + (w/2)**2)
+
+
+def differentiated_lorentzian(x, I, x0, w):
+	denom_term = (x-x0)**2 + (w/2)**2
+	term1 = I*(w/2)**2 / denom_term**2
+	term2 = 2*(x-x0)
+	return -term2 * term1
+
+
+def gaussian(x, I, x0, stdev):
+	# Returns a Gaussian function for the supplied x values
+	# I is intensity, x0 is the centre of functiond and stdev is 
+	# the standard deviation
+	return I * np.exp(-(x-x0)**2 / (2*stdev**2))
 
 
 
